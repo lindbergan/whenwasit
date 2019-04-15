@@ -2,7 +2,7 @@
   <v-container fluid>
     <v-layout justify-center column wrap>
       <h1>När Då Då?</h1>
-      <v-btn round large>Spela</v-btn>
+      <v-btn round large to="/teamsettings">Spela</v-btn>
     </v-layout>
   </v-container>
 </template>

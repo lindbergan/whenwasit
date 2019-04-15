@@ -1,10 +1,11 @@
 <template>
-  <v-container fluid fill-height>
+  <v-container fluid>
     <v-toolbar app dark color="#594939">
       <v-toolbar-title>Inställningar</v-toolbar-title>
     </v-toolbar>
-    <v-layout column wrap white--text align-center justify-space-around>
+    <v-layout column white--text align-center wrap justify-space-around>
       <h1>Antal rundor</h1>
+      <v-select :items="rounds" dark :value="rounds[1]"/>
       <h1>Kategorier</h1>
       <v-list>
         <v-list-tile v-for="category in categories" :key="category.id">
@@ -17,7 +18,7 @@
           </v-list-tile-action>
         </v-list-tile>
       </v-list>
-      <v-btn round large>Fortsätt</v-btn>
+      <v-btn round large to="/game">Fortsätt</v-btn>
     </v-layout>
   </v-container>
 </template>
@@ -30,6 +31,7 @@
 export default {
   data() {
     return {
+      rounds: [5, 10, 15, 20],
       categories: [
         {
           name: "Kända svenska personer",
@@ -44,6 +46,16 @@ export default {
         {
           name: "Kända personer",
           id: 3,
+          selected: false
+        },
+        {
+          name: "Historiska händelser",
+          id: 4,
+          selected: false
+        },
+        {
+          name: "Sportrelaterat",
+          id: 5,
           selected: false
         }
       ]

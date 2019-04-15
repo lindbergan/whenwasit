@@ -3,6 +3,7 @@ import Router from "vue-router";
 import Home from "../views/Home.vue";
 import TeamSettings from "../views/TeamSettings.vue";
 import RoundSettings from "../views/RoundSettings.vue";
+import Game from "../views/Game.vue";
 
 Vue.use(Router);
 
@@ -23,6 +24,11 @@ export default new Router({
       path: "/roundsettings",
       name: "roundsettings",
       component: RoundSettings
+    },
+    {
+      path: "/game",
+      name: "game",
+      component: Game
     }
   ]
 });

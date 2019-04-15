@@ -19,7 +19,7 @@
           </v-list-tile-action>
         </v-list-tile>
       </v-list>
-      <v-btn round large>Fortsätt</v-btn>
+      <v-btn round large to="/roundsettings">Fortsätt</v-btn>
     </v-layout>
   </v-container>
 </template>
