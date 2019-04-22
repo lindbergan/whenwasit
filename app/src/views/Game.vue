@@ -1,10 +1,10 @@
 <template>
   <v-container fluid>
-    <v-layout row wrap justify-space-around id="question-box">
+    <v-layout column wrap id="question-box">
       <v-card>
-        <v-card-title>
-          <h1>{{ superQuestion.title }}</h1>
-        </v-card-title>
+        <v-card-text>
+          <h2>{{ superQuestion.title }}</h2>
+        </v-card-text>
       </v-card>
     </v-layout>
     <v-icon
@@ -13,40 +13,35 @@
       :style="{ top: cardHeight + 'px' }"
       id="arrow"
     >arrow_right_alt</v-icon>
-    <v-layout id="selector" column wrap fill-height justify-center style="margin-left: -35px;">
-      <v-btn class="selector-btn" @click="updateAnswerIndex('Up')">Upp</v-btn>
-      <v-btn class="selector-btn" @click="updateAnswerIndex('Down')">Ner</v-btn>
+    <v-layout id="selector" column wrap fill-height justify-center>
+      <v-icon x-large dark class="selector-btn" @click="updateAnswerIndex('Up')">arrow_drop_up</v-icon>
+      <v-icon x-large dark class="selector-btn" @click="updateAnswerIndex('Down')">arrow_drop_down</v-icon>
     </v-layout>
     <v-layout id="questions" row wrap justify-space-around>
       <v-card
         v-for="item in sortedQuestions"
         :key="item.id"
         width="250"
-        height="200"
+        height="180"
         style="margin-bottom: 15px;"
         class="question-card"
         :class="[shouldBeActive(item.index) ? 'active' : 'inactive']"
       >
-        <v-card-title primary-title>
-          <h3>{{ item.category }}</h3>
+        <v-card-title>
+          <h3>År {{ item.year }}</h3>
         </v-card-title>
         <v-card-text>
+          <h3>{{ item.category }}</h3>
           <span>{{ item.title }}</span>
-          <v-divider light></v-divider>
-          <v-layout justify-center>
-            <h2>
-              <strong>År {{ item.year }}</strong>
-            </h2>
-          </v-layout>
         </v-card-text>
       </v-card>
     </v-layout>
     <v-card id="answer-box">
-      <v-layout column justify-space-around align-center>
+      <v-layout column wrap align-center>
         <v-card-title>
-          <h3>{{ answerText }}</h3>
-          <v-btn large>Färdig</v-btn>
+          <h2>{{ answerText }}</h2>
         </v-card-title>
+        <v-btn large>Färdig</v-btn>
       </v-layout>
     </v-card>
   </v-container>
@@ -55,9 +50,11 @@
 </style>
 <script>
 export default {
+  components: {},
   data() {
     return {
-      answerIndex: 0,
+      answerIndex: 1,
+      totalScroll: 0,
       questions: [
         {
           title: "Gustav Vasa lägger grunden för reformationen.",
@@ -105,7 +102,7 @@ export default {
         }
       ],
       superQuestion: {
-        title: "När föds Gustav Vasa?",
+        title: "När föddes Gustav Vasa?",
         year: "1465",
         category: "Kända svenska personer"
       }
@@ -119,7 +116,9 @@ export default {
         );
       } else if (this.answerIndex === this.sortedQuestions.length) {
         return (
-          "År " + this.sortedQuestions[this.answerIndex - 1].year + " och senare"
+          "År " +
+          this.sortedQuestions[this.answerIndex - 1].year +
+          " och senare"
         );
       } else {
         return (
@@ -144,32 +143,9 @@ export default {
         this.questions[this.answerIndex]
       ];
     },
-    inactiveQuestions() {
-      if (
-        (this.sortedQuestions !== undefined &&
-          this.activeQuestions !== undefined) ||
-        (this.sortedQuestions.length === 0 || this.activeQuestions.length === 0)
-      )
-        return [];
-      return Array.of(...this.sortedQuestions).filter(
-        q => !Array.of(...this.activeQuestions).includes(q)
-      );
-    },
-    leftSideQuestions() {
-      if (this.inactiveQuestions.length === 0) return [];
-      return Array.of(...this.inactiveQuestions).filter(
-        (_, i) => i < this.answerIndex
-      );
-    },
-    rightSideQuestions() {
-      if (this.inactiveQuestions.length === 0) return [];
-      return Array.of(...this.inactiveQuestions).filter(
-        (_, i) => i >= this.answerIndex
-      );
-    },
     cardHeight() {
       const nr = this.answerIndex;
-      const totalOffsetHeight = nr * 200 + 32 + (nr - 1) * 15 + 75;
+      const totalOffsetHeight = nr * 180 + 32 + (nr - 1) * 15 + 150;
       return totalOffsetHeight;
     }
   },
@@ -182,6 +158,8 @@ export default {
         case "Up": {
           this.answerIndex =
             this.answerIndex - 1 < 0 ? this.answerIndex : this.answerIndex - 1;
+          this.totalScroll -= 200;
+          window.scroll(0, this.totalScroll);
           break;
         }
         case "Down": {
@@ -189,6 +167,8 @@ export default {
             this.answerIndex + 1 > this.questions.length
               ? this.answerIndex
               : this.answerIndex + 1;
+          this.totalScroll += 200;
+          window.scroll(0, this.totalScroll);
           break;
         }
         default: {
@@ -210,8 +190,8 @@ export default {
 #questions {
   overflow-y: scroll;
   margin-left: 35px;
-  margin-top: 75px;
-  margin-bottom: 75px;
+  margin-top: 150px;
+  margin-bottom: 125px;
 }
 #arrow {
   position: absolute;
@@ -221,18 +201,26 @@ export default {
   z-index: 3;
 }
 .selector-btn {
-  float: left;
-  height: 80px;
+  width: 100%;
+  height: 50px;
+  margin-left: -10px;
+  cursor: pointer;
 }
 #question-box {
   position: fixed;
   top: 0;
   z-index: 3;
+  width: 100%;
+  margin-left: -30px;
+  text-align: center;
 }
 #answer-box {
   position: fixed;
   bottom: 0;
   z-index: 3;
+  width: 100%;
+  margin-left: -30px;
+  text-align: center;
 }
 </style>
 

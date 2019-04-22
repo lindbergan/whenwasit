@@ -10,6 +10,7 @@
     "core-js": "^2.6.5",
     "register-service-worker": "^1.6.2",
     "vue": "^2.6.6",
+    "vue-progress": "^0.2.1",
     "vue-router": "^3.0.1",
     "vuetify": "^1.5.5",
     "vuex": "^3.0.1"
