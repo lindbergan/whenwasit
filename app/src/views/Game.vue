@@ -1,5 +1,12 @@
 <template>
   <v-container fluid>
+    <v-layout row wrap justify-space-around id="question-box">
+      <v-card>
+        <v-card-title>
+          <h1>{{ superQuestion.title }}</h1>
+        </v-card-title>
+      </v-card>
+    </v-layout>
     <v-icon
       color="maroon"
       style="transform:scale(4);"
@@ -9,13 +16,6 @@
     <v-layout id="selector" column wrap fill-height justify-center style="margin-left: -35px;">
       <v-btn class="selector-btn" @click="updateAnswerIndex('Up')">Upp</v-btn>
       <v-btn class="selector-btn" @click="updateAnswerIndex('Down')">Ner</v-btn>
-    </v-layout>
-    <v-layout row wrap justify-space-around id="question-box">
-      <v-card>
-        <v-card-title>
-          <h1>{{ superQuestion.title }}</h1>
-        </v-card-title>
-      </v-card>
     </v-layout>
     <v-layout id="questions" row wrap justify-space-around>
       <v-card
@@ -41,14 +41,14 @@
         </v-card-text>
       </v-card>
     </v-layout>
-    <v-layout row wrap id="answer-box">
-      <v-card>
+    <v-card id="answer-box">
+      <v-layout column justify-space-around align-center>
         <v-card-title>
-          <h3>Mellan 1500 och 2035</h3>
+          <h3>{{ answerText }}</h3>
+          <v-btn large>Färdig</v-btn>
         </v-card-title>
-        <v-btn>Färdig</v-btn>
-      </v-card>
-    </v-layout>
+      </v-layout>
+    </v-card>
   </v-container>
 </template>
 <style scoped>
@@ -112,6 +112,24 @@ export default {
     };
   },
   computed: {
+    answerText() {
+      if (this.answerIndex === 0) {
+        return (
+          "År " + this.sortedQuestions[this.answerIndex].year + " och tidigare"
+        );
+      } else if (this.answerIndex === this.sortedQuestions.length) {
+        return (
+          "År " + this.sortedQuestions[this.answerIndex - 1].year + " och senare"
+        );
+      } else {
+        return (
+          "Mellan år " +
+          this.activeQuestions[0].year +
+          " och år " +
+          this.activeQuestions[1].year
+        );
+      }
+    },
     sortedQuestions() {
       this.questions.sort((a, b) => a.year - b.year);
       return this.questions;
