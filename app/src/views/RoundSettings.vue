@@ -1,24 +1,28 @@
 <template>
-  <v-container fluid>
+  <v-container fluid fill-height>
     <v-toolbar app dark color="#594939">
       <v-toolbar-title>Inställningar</v-toolbar-title>
     </v-toolbar>
-    <v-layout column white--text align-center wrap justify-space-between>
-      <h1>Antal rundor</h1>
-      <v-select :items="rounds" dark :value="rounds[1]"/>
-      <h1>Kategorier</h1>
-      <v-list style="margin-top: 10px">
-        <v-list-tile v-for="category in categories" :key="category.id">
-          <v-list-tile-content>
-            <v-list-tile-title v-text="category.name"></v-list-tile-title>
-          </v-list-tile-content>
-          <v-list-tile-action>
-            <v-icon v-if="category.selected" color="red">remove</v-icon>
-            <v-icon v-else color="green">check</v-icon>
-          </v-list-tile-action>
-        </v-list-tile>
-      </v-list>
-      <v-btn round large to="/game" style="margin-top: 20px">Fortsätt</v-btn>
+    <v-layout column wrap white--text justify-space-around align-center>
+      <v-layout column wrap justify-space-between>
+        <h1>Antal rundor</h1>
+        <v-select :items="rounds" dark :value="rounds[1]"/>
+      </v-layout>
+      <v-layout column justify-space-around align-center>
+        <h1>Kategorier</h1>
+        <v-list>
+          <v-list-tile v-for="category in categories" :key="category.id">
+            <v-list-tile-content>
+              <v-list-tile-title v-text="category.name"></v-list-tile-title>
+            </v-list-tile-content>
+            <v-list-tile-action>
+              <v-icon v-if="category.selected" color="red">remove</v-icon>
+              <v-icon v-else color="green">check</v-icon>
+            </v-list-tile-action>
+          </v-list-tile>
+        </v-list>
+        <v-btn round large to="/game">Fortsätt</v-btn>
+      </v-layout>
     </v-layout>
   </v-container>
 </template>
