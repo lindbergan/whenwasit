@@ -10,6 +10,13 @@
       <v-btn class="selector-btn" @click="updateAnswerIndex('Up')">Upp</v-btn>
       <v-btn class="selector-btn" @click="updateAnswerIndex('Down')">Ner</v-btn>
     </v-layout>
+    <v-layout row wrap justify-space-around id="question-box">
+      <v-card>
+        <v-card-title>
+          <h1>{{ superQuestion.title }}</h1>
+        </v-card-title>
+      </v-card>
+    </v-layout>
     <v-layout id="questions" row wrap justify-space-around>
       <v-card
         v-for="item in sortedQuestions"
@@ -32,6 +39,14 @@
             </h2>
           </v-layout>
         </v-card-text>
+      </v-card>
+    </v-layout>
+    <v-layout row wrap id="answer-box">
+      <v-card>
+        <v-card-title>
+          <h3>Mellan 1500 och 2035</h3>
+        </v-card-title>
+        <v-btn>Färdig</v-btn>
       </v-card>
     </v-layout>
   </v-container>
@@ -88,7 +103,12 @@ export default {
           id: 6,
           index: 5
         }
-      ]
+      ],
+      superQuestion: {
+        title: "När föds Gustav Vasa?",
+        year: "1465",
+        category: "Kända svenska personer"
+      }
     };
   },
   computed: {
@@ -131,7 +151,7 @@ export default {
     },
     cardHeight() {
       const nr = this.answerIndex;
-      const totalOffsetHeight = nr * 200 + 32 + (nr - 1) * 15;
+      const totalOffsetHeight = nr * 200 + 32 + (nr - 1) * 15 + 75;
       return totalOffsetHeight;
     }
   },
@@ -172,6 +192,8 @@ export default {
 #questions {
   overflow-y: scroll;
   margin-left: 35px;
+  margin-top: 75px;
+  margin-bottom: 75px;
 }
 #arrow {
   position: absolute;
@@ -183,6 +205,16 @@ export default {
 .selector-btn {
   float: left;
   height: 80px;
+}
+#question-box {
+  position: fixed;
+  top: 0;
+  z-index: 3;
+}
+#answer-box {
+  position: fixed;
+  bottom: 0;
+  z-index: 3;
 }
 </style>
 
