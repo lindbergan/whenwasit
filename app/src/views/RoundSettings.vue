@@ -3,11 +3,11 @@
     <v-toolbar app dark color="#594939">
       <v-toolbar-title>Inställningar</v-toolbar-title>
     </v-toolbar>
-    <v-layout column white--text align-center wrap justify-space-around>
+    <v-layout column white--text align-center wrap justify-space-between>
       <h1>Antal rundor</h1>
       <v-select :items="rounds" dark :value="rounds[1]"/>
       <h1>Kategorier</h1>
-      <v-list>
+      <v-list style="margin-top: 10px">
         <v-list-tile v-for="category in categories" :key="category.id">
           <v-list-tile-content>
             <v-list-tile-title v-text="category.name"></v-list-tile-title>
@@ -18,7 +18,7 @@
           </v-list-tile-action>
         </v-list-tile>
       </v-list>
-      <v-btn round large to="/game">Fortsätt</v-btn>
+      <v-btn round large to="/game" style="margin-top: 20px">Fortsätt</v-btn>
     </v-layout>
   </v-container>
 </template>
