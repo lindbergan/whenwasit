@@ -45,7 +45,7 @@
           <v-card-title>
             <h2>{{ answerText }}</h2>
           </v-card-title>
-          <v-btn large>Färdig</v-btn>
+          <v-btn large @click="madeAnAnswer">Färdig</v-btn>
         </v-layout>
       </v-card>
     </v-layout>
@@ -68,13 +68,13 @@
 <style scoped>
 </style>
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 export default {
   components: {},
   data() {
     return {
       currentTeamIndex: 0,
-      gameIsActive: false,
+      gameIsActive: true,
       answerIndex: 0,
       totalScroll: 0
     };
@@ -131,17 +131,24 @@ export default {
       this.gameIsActive = true;
     },
     isCorrectAnswer() {
-      const totalAnswers = this.getTeamAnswers;
-      if (totalAnswers.length === 1 && this.answerIndex === 0) {
-        return question.year <= this.answer[0].year;
-      } else if (this.answer.length === this.answerIndex) {
-        return question.year >= this.answer[0].year;
+      const { year } = this.getCurrentQuestion;
+      if (this.activeAnswers.length === 1 && this.answerIndex === 0) {
+        return year <= this.activeAnswers[0].year;
+      } else if (this.activeAnswers.length === this.answerIndex) {
+        return year >= this.activeAnswers[0].year;
       } else {
-        return (
-          this.activeAnswers[0].year <= question.year &&
-          question.year >= this.activeAnswers[1].year
-        );
+        const afterYear = this.activeAnswers[0].year;
+        const beforeYear = this.activeAnswers[1].year;
+        return afterYear <= year && year <= beforeYear;
       }
+    },
+    madeAnAnswer() {
+      if (this.isCorrectAnswer()) {
+        // addAnswer();
+        // addPoint();
+      } else {
+      }
+      this.gameIsActive = false;
     },
     shouldBeActive(id) {
       return this.activeAnswers.map(i => i.index).includes(id);
