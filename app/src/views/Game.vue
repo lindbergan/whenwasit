@@ -1,159 +1,153 @@
 <template>
   <v-container fluid>
-    <v-layout column wrap id="question-box">
-      <v-card>
-        <v-card-text>
-          <h2>{{ superQuestion.title }}</h2>
-        </v-card-text>
-      </v-card>
-    </v-layout>
-    <v-icon
-      color="maroon"
-      style="transform:scale(4);"
-      :style="{ top: cardHeight + 'px' }"
-      id="arrow"
-    >arrow_right_alt</v-icon>
-    <v-layout id="selector" column wrap fill-height justify-center>
-      <v-icon x-large dark class="selector-btn" @click="updateAnswerIndex('Up')">arrow_drop_up</v-icon>
-      <v-icon x-large dark class="selector-btn" @click="updateAnswerIndex('Down')">arrow_drop_down</v-icon>
-    </v-layout>
-    <v-layout id="questions" row wrap justify-space-around>
-      <v-card
-        v-for="item in sortedQuestions"
-        :key="item.id"
-        width="250"
-        height="180"
-        style="margin-bottom: 15px;"
-        class="question-card"
-        :class="[shouldBeActive(item.index) ? 'active' : 'inactive']"
-      >
-        <v-card-title>
-          <h3>År {{ item.year }}</h3>
-        </v-card-title>
-        <v-card-text>
-          <h3>{{ item.category }}</h3>
-          <span>{{ item.title }}</span>
-        </v-card-text>
-      </v-card>
-    </v-layout>
-    <v-card id="answer-box">
-      <v-layout column wrap align-center>
-        <v-card-title>
-          <h2>{{ answerText }}</h2>
-        </v-card-title>
-        <v-btn large>Färdig</v-btn>
+    <v-layout v-if="gameIsActive">
+      <v-layout column wrap id="question-box">
+        <v-card>
+          <v-card-text>
+            <h2>{{ getCurrentQuestion.title }}</h2>
+          </v-card-text>
+        </v-card>
+        <v-card>
+          <h2>30s</h2>
+        </v-card>
       </v-layout>
-    </v-card>
+      <v-icon
+        color="maroon"
+        style="transform:scale(4);"
+        :style="{ top: arrowTopLength + 'px' }"
+        id="arrow"
+      >arrow_right_alt</v-icon>
+      <v-layout id="selector" column wrap fill-height justify-center>
+        <v-icon x-large dark class="selector-btn" @click="updateAnswerIndex('Up')">arrow_drop_up</v-icon>
+        <v-icon x-large dark class="selector-btn" @click="updateAnswerIndex('Down')">arrow_drop_down</v-icon>
+      </v-layout>
+      <v-layout id="answers" row wrap justify-space-around>
+        <v-card
+          v-for="item in sortedAnswers"
+          :key="item.id"
+          width="250"
+          height="180"
+          style="margin-bottom: 15px;"
+          class="question-card"
+          :class="[shouldBeActive(item.index) ? 'active' : 'inactive']"
+        >
+          <v-card-title>
+            <h3>År {{ item.year }}</h3>
+          </v-card-title>
+          <v-card-text>
+            <h3>{{ item.category }}</h3>
+            <span>{{ item.title }}</span>
+          </v-card-text>
+        </v-card>
+      </v-layout>
+      <v-card id="answer-box">
+        <v-layout column wrap align-center>
+          <v-card-title>
+            <h2>{{ answerText }}</h2>
+          </v-card-title>
+          <v-btn large>Färdig</v-btn>
+        </v-layout>
+      </v-card>
+    </v-layout>
+    <v-layout v-else fill-height column wrap>
+      <v-card>
+        <v-card-title>
+          <h1>{{ getCurrentTeam.name }}</h1>
+        </v-card-title>
+        <v-card-text>
+          <h3>Runda {{ getCurrentRoundNr }}</h3>
+          <h3>{{ getCurrentTeam.points }} poäng</h3>
+        </v-card-text>
+      </v-card>
+      <v-card>
+        <v-btn @click="startGame">Redo</v-btn>
+      </v-card>
+    </v-layout>
   </v-container>
 </template>
 <style scoped>
 </style>
 <script>
+import { mapGetters } from "vuex";
 export default {
   components: {},
   data() {
     return {
-      answerIndex: 1,
-      totalScroll: 0,
-      questions: [
-        {
-          title: "Gustav Vasa lägger grunden för reformationen.",
-          year: "1964",
-          category: "Kända svenska personer",
-          id: 1,
-          index: 0
-        },
-        {
-          title: "Klockupproret mot Gustav Vasa, bryter ut i Dalarna.",
-          year: "1566",
-          category: "Kända svenska personer",
-          id: 2,
-          index: 1
-        },
-        {
-          title:
-            "Sveriges äldsta myndighet, Kammarkollegiet grundas av Gustav Vasa.",
-          year: "1000",
-          category: "Historiska händelser",
-          id: 3,
-          index: 2
-        },
-        {
-          title:
-            "Nationalskalden Carl Michael Bellman dör den 11 februari, 55 år gammal.",
-          year: "2019",
-          category: "Kända svenska personer",
-          id: 4,
-          index: 3
-        },
-        {
-          title: "Kaffeförbudet från 1799 hävs.",
-          year: "2018",
-          category: "Historiska händelser",
-          id: 5,
-          index: 4
-        },
-        {
-          title: "Napoleon Bonaparte utropar sig själv till fransk kejsare.",
-          year: "2035",
-          category: "Historiska händelser",
-          id: 6,
-          index: 5
-        }
-      ],
-      superQuestion: {
-        title: "När föddes Gustav Vasa?",
-        year: "1465",
-        category: "Kända svenska personer"
-      }
+      currentTeamIndex: 0,
+      gameIsActive: false,
+      answerIndex: 0,
+      totalScroll: 0
     };
   },
   computed: {
+    ...mapGetters([
+      "getCurrentQuestion",
+      "getTeamAnswers",
+      "getCurrentTeam",
+      "getCurrentRoundNr"
+    ]),
     answerText() {
       if (this.answerIndex === 0) {
         return (
-          "År " + this.sortedQuestions[this.answerIndex].year + " och tidigare"
+          "År " + this.sortedAnswers[this.answerIndex].year + " och tidigare"
         );
-      } else if (this.answerIndex === this.sortedQuestions.length) {
+      } else if (this.answerIndex === this.sortedAnswers.length) {
         return (
-          "År " +
-          this.sortedQuestions[this.answerIndex - 1].year +
-          " och senare"
+          "År " + this.sortedAnswers[this.answerIndex - 1].year + " och senare"
         );
       } else {
         return (
           "Mellan år " +
-          this.activeQuestions[0].year +
+          this.activeAnswers[0].year +
           " och år " +
-          this.activeQuestions[1].year
+          this.activeAnswers[1].year
         );
       }
     },
-    sortedQuestions() {
-      this.questions.sort((a, b) => a.year - b.year);
-      return this.questions;
+    sortedAnswers() {
+      const totalAnswers = this.getTeamAnswers;
+      totalAnswers.sort((a, b) => a.year - b.year);
+      return totalAnswers;
     },
-    activeQuestions() {
-      if (this.questions.length === 1 || this.answerIndex === 0)
-        return [this.questions[0]];
-      else if (this.answerIndex === this.questions.length)
-        return [this.questions[this.questions.length - 1]];
+    activeAnswers() {
+      const totalAnswers = this.getTeamAnswers;
+      if (totalAnswers.length === 1 || this.answerIndex === 0)
+        return [totalAnswers[0]];
+      else if (this.answerIndex === totalAnswers.length)
+        return [totalAnswers[totalAnswers.length - 1]];
       return [
-        this.questions[this.answerIndex - 1],
-        this.questions[this.answerIndex]
+        totalAnswers[this.answerIndex - 1],
+        totalAnswers[this.answerIndex]
       ];
     },
-    cardHeight() {
+    arrowTopLength() {
       const nr = this.answerIndex;
       const totalOffsetHeight = nr * 180 + 32 + (nr - 1) * 15 + 150;
       return totalOffsetHeight;
     }
   },
   methods: {
+    startGame() {
+      this.gameIsActive = true;
+    },
+    isCorrectAnswer() {
+      const totalAnswers = this.getTeamAnswers;
+      if (totalAnswers.length === 1 && this.answerIndex === 0) {
+        return question.year <= this.answer[0].year;
+      } else if (this.answer.length === this.answerIndex) {
+        return question.year >= this.answer[0].year;
+      } else {
+        return (
+          this.activeAnswers[0].year <= question.year &&
+          question.year >= this.activeAnswers[1].year
+        );
+      }
+    },
     shouldBeActive(id) {
-      return this.activeQuestions.map(i => i.index).includes(id);
+      return this.activeAnswers.map(i => i.index).includes(id);
     },
     updateAnswerIndex(origin) {
+      const totalAnswers = this.getTeamAnswers;
       switch (origin) {
         case "Up": {
           this.answerIndex =
@@ -164,7 +158,7 @@ export default {
         }
         case "Down": {
           this.answerIndex =
-            this.answerIndex + 1 > this.questions.length
+            this.answerIndex + 1 > totalAnswers.length
               ? this.answerIndex
               : this.answerIndex + 1;
           this.totalScroll += 200;
@@ -187,7 +181,7 @@ export default {
 .inactive {
   border: 3px solid maroon;
 }
-#questions {
+#answers {
   overflow-y: scroll;
   margin-left: 35px;
   margin-top: 150px;

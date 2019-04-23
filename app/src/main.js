@@ -4,13 +4,13 @@ import App from "./App.vue";
 import "./plugins/vuetify";
 import router from "./plugins/router";
 
-// import store from "./plugins/store";
-// import "./registerServiceWorker";
+import store from "./plugins/store";
+import "./registerServiceWorker";
 
 Vue.config.productionTip = false;
 
 new Vue({
   router,
-  // store,
+  store,
   render: h => h(App)
 }).$mount("#app");

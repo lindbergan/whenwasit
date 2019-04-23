@@ -1,0 +1,14 @@
+[
+  {
+    "index": 0,
+    "name": "Lag 1",
+    "points": 0,
+    "answers": [0, 1, 2, 3]
+  },
+  {
+    "index": 1,
+    "name": "Lag 2",
+    "points": 0,
+    "answers": [2, 3, 4]
+  }
+]
