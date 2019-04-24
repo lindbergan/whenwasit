@@ -30,6 +30,10 @@ export default new Vuex.Store({
     },
     addPoint({ teams, currentTeamIndex }) {
       teams[currentTeamIndex].points += 1;
+    },
+    nextTeam(state) {
+      const { currentTeamIndex, teams } = state;
+      state.currentTeamIndex = (currentTeamIndex + 1) % teams.length;
     }
   },
   actions: {
@@ -38,6 +42,9 @@ export default new Vuex.Store({
     },
     incTeamPoints({ commit, state }) {
       commit("addPoint", state, state.currentTeamIndex);
+    },
+    newRound({ commit }, state) {
+      commit("nextTeam", state);
     }
   }
 });

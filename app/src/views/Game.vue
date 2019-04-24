@@ -131,7 +131,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(["incTeamPoints", "addAnswerToTeam"]),
+    ...mapActions(["incTeamPoints", "addAnswerToTeam", "newRound"]),
     startGame() {
       this.gameIsActive = true;
     },
@@ -140,6 +140,7 @@ export default {
         this.gameIsActive = false;
         clearInterval(this.timer);
         this.timeLeft = 30;
+        this.newRound();
       }
       this.timeLeft -= 1;
     },
@@ -159,8 +160,8 @@ export default {
       if (this.isCorrectAnswer()) {
         this.addAnswerToTeam();
         this.incTeamPoints();
-      } else {
       }
+      this.newRound();
       this.gameIsActive = false;
     },
     shouldBeActive(id) {
