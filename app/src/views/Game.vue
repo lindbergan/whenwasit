@@ -8,7 +8,7 @@
           </v-card-text>
         </v-card>
         <v-card>
-          <h2>30s</h2>
+          <h2>{{timeLeft}} s</h2>
         </v-card>
       </v-layout>
       <v-icon
@@ -71,12 +71,16 @@
 import { mapGetters, mapActions } from "vuex";
 export default {
   components: {},
+  created() {
+    this.timer = setInterval(() => this.tick(), 1000);
+  },
   data() {
     return {
       currentTeamIndex: 0,
       gameIsActive: true,
       answerIndex: 0,
-      totalScroll: 0
+      totalScroll: 0,
+      timeLeft: 30
     };
   },
   computed: {
@@ -130,6 +134,14 @@ export default {
     ...mapActions(["incTeamPoints", "addAnswerToTeam"]),
     startGame() {
       this.gameIsActive = true;
+    },
+    tick() {
+      if (this.timeLeft - 1 < 1) {
+        this.gameIsActive = false;
+        clearInterval(this.timer);
+        this.timeLeft = 30;
+      }
+      this.timeLeft -= 1;
     },
     isCorrectAnswer() {
       const { year } = this.getCurrentQuestion;
