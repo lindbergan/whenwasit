@@ -127,6 +127,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(["incTeamPoints", "addAnswerToTeam"]),
     startGame() {
       this.gameIsActive = true;
     },
@@ -144,8 +145,8 @@ export default {
     },
     madeAnAnswer() {
       if (this.isCorrectAnswer()) {
-        // addAnswer();
-        // addPoint();
+        this.addAnswerToTeam();
+        this.incTeamPoints();
       } else {
       }
       this.gameIsActive = false;

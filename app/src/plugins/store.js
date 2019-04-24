@@ -25,12 +25,19 @@ export default new Vuex.Store({
     getCurrentRoundNr: ({ currentRoundNr }) => currentRoundNr
   },
   mutations: {
-    addAnswer(state, answerId, teamId) {
-      state.teams[teamId].answers.unshift(state.questions[answerId]);
+    addAnswer({ teams, currentQuestionIndex, currentTeamIndex }) {
+      teams[currentTeamIndex].answers.unshift(currentQuestionIndex);
     },
-    addPoint(state, teamId) {
-      state.teams[teamId].points += 1;
+    addPoint({ teams, currentTeamIndex }) {
+      teams[currentTeamIndex].points += 1;
     }
   },
-  actions: {}
+  actions: {
+    addAnswerToTeam({ commit, state }) {
+      commit("addAnswer", [state.currentQuestionIndex, state.currentTeamIndex]);
+    },
+    incTeamPoints({ commit, state }) {
+      commit("addPoint", state, state.currentTeamIndex);
+    }
+  }
 });
