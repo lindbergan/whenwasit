@@ -29,6 +29,10 @@ export default new Router({
       path: "/game",
       name: "game",
       component: Game
+    },
+    {
+      path: "*",
+      redirect: "/"
     }
   ]
 });
