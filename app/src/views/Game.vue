@@ -72,12 +72,12 @@ import { mapGetters, mapActions } from "vuex";
 export default {
   components: {},
   created() {
-    this.timer = setInterval(() => this.tick(), 1000);
+    this.initRoundAnswers();
   },
   data() {
     return {
       currentTeamIndex: 0,
-      gameIsActive: true,
+      gameIsActive: false,
       answerIndex: 0,
       totalScroll: 0,
       timeLeft: 30
@@ -131,24 +131,32 @@ export default {
     }
   },
   methods: {
-    ...mapActions(["incTeamPoints", "addAnswerToTeam", "newRound"]),
+    ...mapActions([
+      "incTeamPoints",
+      "addAnswerToTeam",
+      "newRound",
+      "initRoundAnswers"
+    ]),
     startGame() {
       this.gameIsActive = true;
+      this.startTimer();
+    },
+    startTimer() {
+      this.timer = setInterval(() => this.tick(), 1000);
     },
     tick() {
       if (this.timeLeft - 1 < 1) {
         this.gameIsActive = false;
-        clearInterval(this.timer);
-        this.timeLeft = 30;
+        this.resetTimer();
         this.newRound();
       }
-      this.timeLeft -= 1;
+      // this.timeLeft -= 1;
     },
     isCorrectAnswer() {
       const { year } = this.getCurrentQuestion;
       if (this.activeAnswers.length === 1 && this.answerIndex === 0) {
         return year <= this.activeAnswers[0].year;
-      } else if (this.activeAnswers.length === this.answerIndex) {
+      } else if (this.sortedAnswers.length === this.answerIndex) {
         return year >= this.activeAnswers[0].year;
       } else {
         const afterYear = this.activeAnswers[0].year;
@@ -156,7 +164,12 @@ export default {
         return afterYear <= year && year <= beforeYear;
       }
     },
+    resetTimer() {
+      clearInterval(this.timer);
+      this.timeLeft = 30;
+    },
     madeAnAnswer() {
+      this.resetTimer();
       if (this.isCorrectAnswer()) {
         this.addAnswerToTeam();
         this.incTeamPoints();
