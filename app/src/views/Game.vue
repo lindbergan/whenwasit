@@ -50,6 +50,14 @@
       </v-card>
     </v-layout>
     <v-layout v-else fill-height column wrap>
+      <v-card v-if="shouldShowPreviousQuestion">
+        <v-card-title v-if="previousQuestion.wasCorrect">
+          <h1>Rätt!</h1>
+        </v-card-title>
+        <v-card-title v-else>
+          <h1>Fel! Rätt år var: {{ previousQuestion.year }}</h1>
+        </v-card-title>
+      </v-card>
       <v-card>
         <v-card-title>
           <h1>{{ getCurrentTeam.name }}</h1>
@@ -80,7 +88,11 @@ export default {
       gameIsActive: false,
       answerIndex: 0,
       totalScroll: 0,
-      timeLeft: 30
+      timeLeft: 30,
+      previousQuestion: {
+        year: null,
+        wasCorrect: null
+      }
     };
   },
   computed: {
@@ -90,6 +102,9 @@ export default {
       "getCurrentTeam",
       "getCurrentRoundNr"
     ]),
+    shouldShowPreviousQuestion() {
+      return this.previousQuestion.year !== null;
+    },
     answerText() {
       if (this.answerIndex === 0) {
         return (
@@ -144,13 +159,21 @@ export default {
     startTimer() {
       this.timer = setInterval(() => this.tick(), 1000);
     },
+    resetForNextRound() {
+      this.gameIsActive = false;
+      this.answerIndex = 0;
+      this.previousQuestion = {
+        year: this.getCurrentQuestion.year,
+        wasCorrect: this.isCorrectAnswer()
+      };
+      this.resetTimer();
+      this.newRound();
+    },
     tick() {
       if (this.timeLeft - 1 < 1) {
-        this.gameIsActive = false;
-        this.resetTimer();
-        this.newRound();
+        this.resetForNextRound();
       }
-      // this.timeLeft -= 1;
+      this.timeLeft -= 1;
     },
     isCorrectAnswer() {
       const { year } = this.getCurrentQuestion;
@@ -169,13 +192,11 @@ export default {
       this.timeLeft = 30;
     },
     madeAnAnswer() {
-      this.resetTimer();
       if (this.isCorrectAnswer()) {
         this.addAnswerToTeam();
         this.incTeamPoints();
       }
-      this.newRound();
-      this.gameIsActive = false;
+      this.resetForNextRound();
     },
     shouldBeActive(id) {
       return this.activeAnswers.map(i => i.index).includes(id);
