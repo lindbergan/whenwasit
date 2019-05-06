@@ -23,9 +23,9 @@
       <v-card>
         <v-card-text>
           <v-layout>
-            <input type="text" placeholder="Namn på laget">
+            <input type="text" placeholder="Namn på laget" v-model="textfield">
             <v-card-actions>
-              <v-icon>save</v-icon>
+              <v-icon @click="addTeam(textfield)">save</v-icon>
             </v-card-actions>
           </v-layout>
         </v-card-text>
@@ -42,11 +42,16 @@
 <script>
 import { mapGetters, mapActions } from "vuex";
 export default {
+  data() {
+    return {
+      textfield: ""
+    };
+  },
   computed: {
     ...mapGetters(["getAllTeams"])
   },
   methods: {
-    ...mapActions(["selectTeam", "initGame", "testGetter"]),
+    ...mapActions(["selectTeam", "initGame", "addTeam"]),
     renderTeams(index) {
       this.selectTeam(index);
     }

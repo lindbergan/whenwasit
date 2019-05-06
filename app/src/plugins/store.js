@@ -83,6 +83,18 @@ export default new Vuex.Store({
       teams.set(teamId, team);
       state.teams = null;
       state.teams = teams;
+    },
+    addNewTeam(state, name) {
+      const { teams } = state;
+      teams.set(teams.length, {
+        index: teams.length,
+        name,
+        points: 0,
+        answers: [],
+        selected: true
+      });
+      state.teams = null;
+      state.teams = teams;
     }
   },
   actions: {
@@ -103,9 +115,10 @@ export default new Vuex.Store({
     selectTeam({ commit }, teamId) {
       commit("changeTeamSelect", teamId);
     },
-    testGetter({ state }) {
-      const { teams } = state;
-      return teams;
+    addTeam({ commit }, name, fuckyou) {
+      console.log(name);
+
+      commit("addNewTeam", name);
     }
   }
 });
