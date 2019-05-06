@@ -79,9 +79,6 @@
 import { mapGetters, mapActions } from "vuex";
 export default {
   components: {},
-  created() {
-    this.initRoundAnswers();
-  },
   data() {
     return {
       currentTeamIndex: 0,
@@ -149,8 +146,7 @@ export default {
     ...mapActions([
       "incTeamPoints",
       "addAnswerToTeam",
-      "newRound",
-      "initRoundAnswers"
+      "newRound"
     ]),
     startGame() {
       this.gameIsActive = true;

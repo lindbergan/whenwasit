@@ -1,14 +1,30 @@
 [
   {
     "index": 0,
-    "name": "Lag 1",
+    "name": "Crazy Cowboys",
     "points": 0,
-    "answers": []
+    "answers": [],
+    "selected": true
   },
   {
     "index": 1,
-    "name": "Lag 2",
+    "name": "Mad Chicas",
     "points": 0,
-    "answers": []
+    "answers": [],
+    "selected": true
+  },
+  {
+    "index": 2,
+    "name": "Cool Guys",
+    "points": 0,
+    "answers": [],
+    "selected": false
+  },
+  {
+    "index": 3,
+    "name": "Mad Lads",
+    "points": 0,
+    "answers": [],
+    "selected": false
   }
 ]

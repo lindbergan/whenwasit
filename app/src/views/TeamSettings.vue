@@ -6,7 +6,7 @@
     <v-layout column wrap white--text align-center justify-space-around>
       <h1>Antal lag</h1>
       <v-list>
-        <v-list-tile v-for="team in teams" :key="team.id">
+        <v-list-tile v-for="team in getAllTeams" :key="team.index">
           <v-list-tile-content>
             <v-list-tile-title v-text="team.name"></v-list-tile-title>
           </v-list-tile-content>
@@ -14,11 +14,22 @@
             <v-icon color="blue">edit</v-icon>
           </v-list-tile-action>
           <v-list-tile-action>
-            <v-icon v-if="team.selected" color="red">remove</v-icon>
-            <v-icon v-else color="green">check</v-icon>
+            <v-icon v-if="team.selected" color="red" @click="renderTeams(team.index)">remove</v-icon>
+            <v-icon v-else color="green" @click="renderTeams(team.index)">check</v-icon>
           </v-list-tile-action>
         </v-list-tile>
       </v-list>
+      <h2>Lägg till lag</h2>
+      <v-card>
+        <v-card-text>
+          <v-layout>
+            <input type="text" placeholder="Namn på laget">
+            <v-card-actions>
+              <v-icon>save</v-icon>
+            </v-card-actions>
+          </v-layout>
+        </v-card-text>
+      </v-card>
       <v-btn round large to="/roundsettings">Fortsätt</v-btn>
     </v-layout>
   </v-container>
@@ -29,27 +40,19 @@
 }
 </style>
 <script>
+import { mapGetters, mapActions } from "vuex";
 export default {
-  data() {
-    return {
-      teams: [
-        {
-          name: "Crazy Cowboys",
-          id: 1,
-          selected: true
-        },
-        {
-          name: "Mad Chicas",
-          id: 2,
-          selected: true
-        },
-        {
-          name: "Cool Guys",
-          id: 3,
-          selected: false
-        }
-      ]
-    };
+  computed: {
+    ...mapGetters(["getAllTeams"])
+  },
+  methods: {
+    ...mapActions(["selectTeam", "initGame", "testGetter"]),
+    renderTeams(index) {
+      this.selectTeam(index);
+    }
+  },
+  created() {
+    this.initGame();
   }
 };
 </script>
@@ -60,6 +63,10 @@ h1 {
   font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
     "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
   font-weight: 900;
+}
+input {
+  border: 1px solid #ccc;
+  text-align: center;
 }
 </style>
 
