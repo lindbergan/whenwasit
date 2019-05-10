@@ -22,7 +22,7 @@ export default new Vuex.Store({
     },
     getTeamAnswers: ({ teams, currentTeamIndex }) => {
       const team = teams.get(currentTeamIndex);
-      return team.map(id => questions[id]);
+      return team.answers.map(id => questions[id]);
     },
     getCurrentQuestion: ({ questions, currentQuestionIndex }) =>
       questions[currentQuestionIndex],
@@ -59,7 +59,16 @@ export default new Vuex.Store({
     },
     nextTeam(state) {
       const { currentTeamIndex, teams } = state;
-      state.currentTeamIndex = (currentTeamIndex + 1) % teams.length;
+      const teamsPlayingIndexes = Array.of(...teams.entries())
+        .map(t => t[1])
+        .filter(t => t.selected)
+        .map(t => t.index);
+
+      state.currentTeamIndex =
+        teamsPlayingIndexes[
+          (teamsPlayingIndexes.indexOf(currentTeamIndex) + 1) %
+            teamsPlayingIndexes.length
+        ];
     },
     changeQuestion(state) {
       const { seenQuestions } = state;
@@ -81,13 +90,21 @@ export default new Vuex.Store({
         team.selected = !team.selected;
       }
       teams.set(teamId, team);
-      state.teams = null;
-      state.teams = teams;
+      state.teams = new Map(teams.entries());
+
+      // If the first team is deselected then the currentTeamIndex is updated
+      const teamsPlayingIndexes = Array.of(...teams.entries())
+        .map(t => t[1])
+        .filter(t => t.selected)
+        .map(t => t.index)
+        .sort((a, b) => a - b);
+
+      state.currentTeamIndex = teamsPlayingIndexes[0];
     },
     addNewTeam(state, name) {
       const { teams } = state;
-      teams.set(teams.length, {
-        index: teams.length,
+      teams.set(teams.size, {
+        index: teams.size,
         name,
         points: 0,
         answers: [],
@@ -115,9 +132,7 @@ export default new Vuex.Store({
     selectTeam({ commit }, teamId) {
       commit("changeTeamSelect", teamId);
     },
-    addTeam({ commit }, name, fuckyou) {
-      console.log(name);
-
+    addTeam({ commit }, name) {
       commit("addNewTeam", name);
     }
   }

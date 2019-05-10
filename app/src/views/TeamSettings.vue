@@ -25,7 +25,7 @@
           <v-layout>
             <input type="text" placeholder="Namn på laget" v-model="textfield">
             <v-card-actions>
-              <v-icon @click="addTeam(textfield)">save</v-icon>
+              <v-icon @click="clickedOnAdd">save</v-icon>
             </v-card-actions>
           </v-layout>
         </v-card-text>
@@ -54,6 +54,10 @@ export default {
     ...mapActions(["selectTeam", "initGame", "addTeam"]),
     renderTeams(index) {
       this.selectTeam(index);
+    },
+    clickedOnAdd() {
+      this.addTeam(this.textfield);
+      this.textfield = "";
     }
   },
   created() {
