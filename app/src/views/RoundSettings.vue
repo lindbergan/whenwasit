@@ -16,8 +16,8 @@
               <v-list-tile-title v-text="category.name"></v-list-tile-title>
             </v-list-tile-content>
             <v-list-tile-action>
-              <v-icon v-if="category.selected" color="red">remove</v-icon>
-              <v-icon v-else color="green">check</v-icon>
+              <v-icon v-if="category.selected" @click="changeSelect(category.id)" color="red">remove</v-icon>
+              <v-icon v-else @click="changeSelect(category.id)" color="green">check</v-icon>
             </v-list-tile-action>
           </v-list-tile>
         </v-list>
@@ -39,31 +39,36 @@ export default {
       categories: [
         {
           name: "Kända svenska personer",
-          id: 1,
+          id: 0,
           selected: true
         },
         {
           name: "Katastrofer",
-          id: 2,
+          id: 1,
           selected: true
         },
         {
           name: "Kända personer",
-          id: 3,
+          id: 2,
           selected: false
         },
         {
           name: "Historiska händelser",
-          id: 4,
+          id: 3,
           selected: false
         },
         {
           name: "Sportrelaterat",
-          id: 5,
+          id: 4,
           selected: false
         }
       ]
     };
+  },
+  methods: {
+    changeSelect(id) {
+      this.categories[id].selected = !this.categories[id].selected;
+    }
   }
 };
 </script>

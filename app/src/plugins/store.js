@@ -5,6 +5,7 @@ Vue.use(Vuex);
 
 import questions from "../data/swe-questions.json";
 import defaultTeams from "../data/teams.json";
+import Team from "../components/team";
 
 export default new Vuex.Store({
   state: {
@@ -103,15 +104,8 @@ export default new Vuex.Store({
     },
     addNewTeam(state, name) {
       const { teams } = state;
-      teams.set(teams.size, {
-        index: teams.size,
-        name,
-        points: 0,
-        answers: [],
-        selected: true
-      });
-      state.teams = null;
-      state.teams = teams;
+      teams.set(teams.size, new Team(teams.size, name));
+      state.teams = new Map(teams.entries());
     }
   },
   actions: {
