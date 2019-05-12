@@ -3,7 +3,6 @@ När Då Då / When Was It
 
 ## How to get started
 
-In terminal:
 ```
 $ git clone git@github.com:lindbergan/whenwasit.git
 $ cd app/
