@@ -74,7 +74,7 @@ h1 {
   font-weight: 900;
 }
 input {
-  border: 1px solid #ccc;
+  border: 1px solid rgb(151, 125, 125);
   text-align: center;
 }
 </style>

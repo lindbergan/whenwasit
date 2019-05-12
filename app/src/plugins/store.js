@@ -16,12 +16,15 @@ export default new Vuex.Store({
     totalRoundsPlayed: 0,
     currentRoundNr: 1,
     seenQuestions: [],
-    roundLimit: 10
+    roundLimit: 1
   },
   getters: {
     getAllTeams: ({ teams }) => {
       return Array.of(...teams.values());
     },
+    getTeamsPlaying: ({ teams }) =>
+      Array.of(...teams.values()).filter(t => t.selected),
+    getCurrentRoundNr: ({ currentRoundNr }) => currentRoundNr,
     getRoundLimit: ({ roundLimit }) => roundLimit,
     getTeamAnswers: ({ teams, currentTeamIndex }) => {
       const team = teams.get(currentTeamIndex);
@@ -31,8 +34,7 @@ export default new Vuex.Store({
       questions[currentQuestionIndex],
     getCurrentTeam: ({ teams, currentTeamIndex }) => {
       return teams.get(currentTeamIndex);
-    },
-    getCurrentRoundNr: ({ currentRoundNr }) => currentRoundNr
+    }
   },
   mutations: {
     addAnswer({ teams, currentQuestionIndex, currentTeamIndex }) {
@@ -72,17 +74,19 @@ export default new Vuex.Store({
         .filter(t => t.selected)
         .map(t => t.index);
 
-      state.currentTeamIndex =
-        teamsPlayingIndexes[
-          (teamsPlayingIndexes.indexOf(currentTeamIndex) + 1) %
-            teamsPlayingIndexes.length
-        ];
+      // Update the round nr when the last player have played
       if (
         currentTeamIndex === teamsPlayingIndexes[teamsPlayingIndexes.length - 1]
       ) {
         state.currentRoundNr = currentRoundNr + 1;
       }
       state.totalRoundsPlayed = totalRoundsPlayed + 1;
+
+      state.currentTeamIndex =
+        teamsPlayingIndexes[
+          (teamsPlayingIndexes.indexOf(currentTeamIndex) + 1) %
+            teamsPlayingIndexes.length
+        ];
     },
     changeQuestion(state) {
       const { seenQuestions } = state;

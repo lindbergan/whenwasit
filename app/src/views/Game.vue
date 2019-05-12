@@ -1,6 +1,17 @@
 <template>
   <v-container fluid>
-    <v-layout v-if="gameIsActive">
+    <v-layout column wrap v-if="gameIsFinished">
+      <v-card>
+        <v-card-title primaryTitle>
+          <h1>Slut</h1>
+        </v-card-title>
+        <v-card v-for="team in getTeamsPlaying" :key="team.index">
+          <h3>{{ team.name }}</h3>
+        </v-card>
+      </v-card>
+      <v-btn primary to="/">Spela igen</v-btn>
+    </v-layout>
+    <v-layout v-else-if="gameIsActive">
       <v-layout column wrap id="question-box">
         <v-card>
           <v-card-text>
@@ -78,11 +89,16 @@
 <script>
 import { mapGetters, mapActions } from "vuex";
 export default {
+  created() {
+    if (this.getCurrentTeam === undefined) {
+      const url = document.location.href;
+      document.location.href = url.substring(0, url.indexOf("/", 8));
+    }
+  },
   components: {},
   data() {
     return {
       gameIsActive: false,
-      gameIsFinished: true,
       answerIndex: 0,
       totalScroll: 0,
       timeLeft: 30,
@@ -97,8 +113,17 @@ export default {
       "getCurrentQuestion",
       "getTeamAnswers",
       "getCurrentTeam",
-      "getCurrentRoundNr"
+      "getCurrentRoundNr",
+      "getRoundLimit",
+      "getTeamsPlaying"
     ]),
+
+    gameIsFinished: {
+      cache: false,
+      get() {
+        return this.getCurrentRoundNr - 1 === this.getRoundLimit;
+      }
+    },
     shouldShowPreviousQuestion() {
       return this.previousQuestion.year !== null;
     },
