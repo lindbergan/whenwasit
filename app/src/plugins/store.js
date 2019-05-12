@@ -15,12 +15,14 @@ export default new Vuex.Store({
     currentTeamIndex: 0,
     totalRoundsPlayed: 0,
     currentRoundNr: 1,
-    seenQuestions: []
+    seenQuestions: [],
+    roundLimit: 10
   },
   getters: {
     getAllTeams: ({ teams }) => {
       return Array.of(...teams.values());
     },
+    getRoundLimit: ({ roundLimit }) => roundLimit,
     getTeamAnswers: ({ teams, currentTeamIndex }) => {
       const team = teams.get(currentTeamIndex);
       return team.answers.map(id => questions[id]);
@@ -59,7 +61,12 @@ export default new Vuex.Store({
       teams.set(currentTeamIndex, team);
     },
     nextTeam(state) {
-      const { currentTeamIndex, teams } = state;
+      const {
+        currentTeamIndex,
+        teams,
+        currentRoundNr,
+        totalRoundsPlayed
+      } = state;
       const teamsPlayingIndexes = Array.of(...teams.entries())
         .map(t => t[1])
         .filter(t => t.selected)
@@ -70,6 +77,12 @@ export default new Vuex.Store({
           (teamsPlayingIndexes.indexOf(currentTeamIndex) + 1) %
             teamsPlayingIndexes.length
         ];
+      if (
+        currentTeamIndex === teamsPlayingIndexes[teamsPlayingIndexes.length - 1]
+      ) {
+        state.currentRoundNr = currentRoundNr + 1;
+      }
+      state.totalRoundsPlayed = totalRoundsPlayed + 1;
     },
     changeQuestion(state) {
       const { seenQuestions } = state;

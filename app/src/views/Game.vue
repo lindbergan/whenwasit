@@ -81,8 +81,8 @@ export default {
   components: {},
   data() {
     return {
-      currentTeamIndex: 0,
       gameIsActive: false,
+      gameIsFinished: true,
       answerIndex: 0,
       totalScroll: 0,
       timeLeft: 30,
@@ -143,11 +143,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions([
-      "incTeamPoints",
-      "addAnswerToTeam",
-      "newRound"
-    ]),
+    ...mapActions(["incTeamPoints", "addAnswerToTeam", "newRound"]),
     startGame() {
       this.gameIsActive = true;
       this.startTimer();
