@@ -5,7 +5,7 @@ export default class Team {
       name,
       points: 0,
       answers: [],
-      selected: true
+      isPlaying: true
     };
   }
 }

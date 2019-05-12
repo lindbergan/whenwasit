@@ -91,6 +91,8 @@ import { mapGetters, mapActions } from "vuex";
 export default {
   created() {
     if (this.getCurrentTeam === undefined) {
+      // Used for developers.
+      // Vue doesn't refetch getCurrentTeam when refreshing page.
       const url = document.location.href;
       document.location.href = url.substring(0, url.indexOf("/", 8));
     }

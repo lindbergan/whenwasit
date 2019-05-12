@@ -16,14 +16,14 @@ export default new Vuex.Store({
     totalRoundsPlayed: 0,
     currentRoundNr: 1,
     seenQuestions: [],
-    roundLimit: 1
+    roundLimit: 10
   },
   getters: {
     getAllTeams: ({ teams }) => {
       return Array.of(...teams.values());
     },
     getTeamsPlaying: ({ teams }) =>
-      Array.of(...teams.values()).filter(t => t.selected),
+      Array.of(...teams.values()).filter(team => team.isPlaying),
     getCurrentRoundNr: ({ currentRoundNr }) => currentRoundNr,
     getRoundLimit: ({ roundLimit }) => roundLimit,
     getTeamAnswers: ({ teams, currentTeamIndex }) => {
@@ -71,7 +71,7 @@ export default new Vuex.Store({
       } = state;
       const teamsPlayingIndexes = Array.of(...teams.entries())
         .map(t => t[1])
-        .filter(t => t.selected)
+        .filter(team => team.isPlaying)
         .map(t => t.index);
 
       // Update the round nr when the last player have played
@@ -102,18 +102,18 @@ export default new Vuex.Store({
       const { teams } = state;
       const team = teams.get(teamId);
       if (
-        !team.selected ||
-        Array.of(...teams.values()).filter(t => t.selected).length !== 1
+        !team.isPlaying ||
+        Array.of(...teams.values()).filter(team => team.isPlaying).length !== 1
       ) {
-        team.selected = !team.selected;
+        team.isPlaying = !team.isPlaying;
       }
       teams.set(teamId, team);
       state.teams = new Map(teams.entries());
 
-      // If the first team is deselected then the currentTeamIndex is updated
+      // If the first team is deisPlaying then the currentTeamIndex is updated
       const teamsPlayingIndexes = Array.of(...teams.entries())
         .map(t => t[1])
-        .filter(t => t.selected)
+        .filter(team => team.isPlaying)
         .map(t => t.index)
         .sort((a, b) => a - b);
 

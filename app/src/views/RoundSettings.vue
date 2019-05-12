@@ -16,7 +16,11 @@
               <v-list-tile-title v-text="category.name"></v-list-tile-title>
             </v-list-tile-content>
             <v-list-tile-action>
-              <v-icon v-if="category.selected" @click="changeSelect(category.id)" color="red">remove</v-icon>
+              <v-icon
+                v-if="category.isPlaying"
+                @click="changeSelect(category.id)"
+                color="red"
+              >remove</v-icon>
               <v-icon v-else @click="changeSelect(category.id)" color="green">check</v-icon>
             </v-list-tile-action>
           </v-list-tile>
@@ -40,34 +44,34 @@ export default {
         {
           name: "Kända svenska personer",
           id: 0,
-          selected: true
+          isPlaying: true
         },
         {
           name: "Katastrofer",
           id: 1,
-          selected: true
+          isPlaying: true
         },
         {
           name: "Kända personer",
           id: 2,
-          selected: false
+          isPlaying: false
         },
         {
           name: "Historiska händelser",
           id: 3,
-          selected: false
+          isPlaying: false
         },
         {
           name: "Sportrelaterat",
           id: 4,
-          selected: false
+          isPlaying: false
         }
       ]
     };
   },
   methods: {
     changeSelect(id) {
-      this.categories[id].selected = !this.categories[id].selected;
+      this.categories[id].isPlaying = !this.categories[id].isPlaying;
     }
   }
 };

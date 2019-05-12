@@ -14,7 +14,7 @@
             <v-icon color="blue">edit</v-icon>
           </v-list-tile-action>
           <v-list-tile-action>
-            <v-icon v-if="team.selected" color="red" @click="renderTeams(team.index)">remove</v-icon>
+            <v-icon v-if="team.isPlaying" color="red" @click="renderTeams(team.index)">remove</v-icon>
             <v-icon v-else color="green" @click="renderTeams(team.index)">check</v-icon>
           </v-list-tile-action>
         </v-list-tile>

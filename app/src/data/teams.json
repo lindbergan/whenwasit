@@ -4,27 +4,27 @@
     "name": "Crazy Cowboys",
     "points": 0,
     "answers": [],
-    "selected": true
+    "isPlaying": true
   },
   {
     "index": 1,
     "name": "Mad Chicas",
     "points": 0,
     "answers": [],
-    "selected": true
+    "isPlaying": true
   },
   {
     "index": 2,
     "name": "Cool Guys",
     "points": 0,
     "answers": [],
-    "selected": false
+    "isPlaying": false
   },
   {
     "index": 3,
     "name": "Mad Lads",
     "points": 0,
     "answers": [],
-    "selected": false
+    "isPlaying": false
   }
 ]
