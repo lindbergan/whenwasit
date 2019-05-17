@@ -1,67 +1,116 @@
 <template>
   <v-container fluid>
-    <v-layout column wrap v-if="gameIsFinished">
-      <v-card>
-        <v-card-title primaryTitle>
-          <h1>Slut</h1>
-        </v-card-title>
-        <v-card v-for="team in getTeamsPlaying" :key="team.index">
-          <h3>{{ team.name }}</h3>
-        </v-card>
-      </v-card>
-      <v-btn primary to="/">Spela igen</v-btn>
+    <v-layout column wrap v-if="gameIsFinished" white--text align-center>
+      <img src="img/icons/icon.png" width="75px" style="margin-bottom: 25px;">
+      <img
+        width="100%"
+        style="max-width: 350px; margin-bottom: 25px; align-self: center"
+        src="img/icons/name.png"
+      >
+      <h1 style="margin-bottom: 25px;">Slut</h1>
+      <ol>
+        <h3>
+          <li
+            v-for="team in getTeamsPlaying"
+            :key="getTeamsPlaying.indexOf(team)"
+          >{{team.name}} - {{team.points}} poäng</li>
+        </h3>
+      </ol>
+      <h2
+        id="current-teams-turn"
+        style="margin-top: 25px; margin-bottom: 25px;"
+        :class="{ isDashed: this.isDashed, isSolid: !this.isDashed }"
+      >{{ getCurrentTeam.name }} VINNER!</h2>
+      <v-btn round large style="font-family: Open Sans" @click="endGame()" to="/">Spela igen</v-btn>
     </v-layout>
-    <v-layout v-else-if="gameIsActive">
-      <v-layout column wrap id="question-box">
-        <v-card>
-          <v-card-text>
-            <h2>{{ getCurrentQuestion.title }}</h2>
-          </v-card-text>
+    <v-layout v-else-if="gameIsActive" white--text>
+      <div
+        style="display: flex; flex-direction: column; align-items: center;"
+        v-scroll="fixElements"
+      >
+        <div v-if="fixTimeTop" style="z-index: 3; position: fixed; top: 30px;">
+          <v-card class="rounded">
+            <v-layout row wrap justify-center align-center>
+              <v-card-text style="text-align: center;">
+                <h1
+                  style="margin-bottom: 25px; width: 50px; display: inline; margin-right: 25px;"
+                >{{timeLeft}}</h1>
+                <h3
+                  style="font-family: Open Sans; font-weight: 400; display: inline;"
+                >{{ getCurrentQuestion.title }}</h3>
+              </v-card-text>
+            </v-layout>
+          </v-card>
+        </div>
+        <img src="img/icons/name.png" style="width: 100%; margin-bottom: 25px;">
+        <v-card class="rounded">
+          <div style="display: flex; flex-direction: column; align-items: center;">
+            <v-card-text style="text-align: center;">
+              <h3 style="font-family: Open Sans; font-weight: 400;">{{ getCurrentQuestion.title }}</h3>
+            </v-card-text>
+          </div>
         </v-card>
-        <v-card>
-          <h2>{{timeLeft}} s</h2>
-        </v-card>
-      </v-layout>
-      <v-icon
-        color="maroon"
-        style="transform:scale(4);"
-        :style="{ top: arrowTopLength + 'px' }"
-        id="arrow"
-      >arrow_right_alt</v-icon>
-      <v-layout id="selector" column wrap fill-height justify-center>
-        <v-icon x-large dark class="selector-btn" @click="updateAnswerIndex('Up')">arrow_drop_up</v-icon>
-        <v-icon x-large dark class="selector-btn" @click="updateAnswerIndex('Down')">arrow_drop_down</v-icon>
-      </v-layout>
-      <v-layout id="answers" row wrap justify-space-around>
-        <v-card
-          v-for="item in sortedAnswers"
-          :key="item.id"
-          width="250"
-          height="180"
-          style="margin-bottom: 15px;"
-          class="question-card"
-          :class="[shouldBeActive(item.index) ? 'active' : 'inactive']"
-        >
-          <v-card-title>
-            <h3>År {{ item.year }}</h3>
-          </v-card-title>
-          <v-card-text>
-            <h3>{{ item.category }}</h3>
-            <span>{{ item.title }}</span>
-          </v-card-text>
-        </v-card>
-      </v-layout>
-      <v-card id="answer-box">
-        <v-layout column wrap align-center>
-          <v-card-title>
-            <h2>{{ answerText }}</h2>
-          </v-card-title>
-          <v-btn large @click="madeAnAnswer">Färdig</v-btn>
+        <h1 style="margin-bottom: 25px; font-size: 55px;">{{timeLeft}}</h1>
+        <v-layout id="answers" row wrap>
+          <v-card
+            v-for="item in sortedAnswers"
+            :key="sortedAnswers.indexOf(item)"
+            style="margin-bottom: 15px; padding: 5px; width: 100%;"
+            class="rounded"
+            :class="[shouldBeActive(item.index) ? 'active' : 'inactive']"
+            @click="updateAnswerIndex(sortedAnswers.indexOf(item))"
+          >
+            <v-card-title style="justify-content: center; width: 100%;">
+              <h2>År {{ item.year }}</h2>
+            </v-card-title>
+            <v-card-text>
+              <p>{{ item.title }}</p>
+            </v-card-text>
+          </v-card>
         </v-layout>
-      </v-card>
+        <v-btn
+          :style="[fixButtonBot ? {
+            position: 'fixed',
+            bottom: '30px',
+            backgroundColor: '#222646',
+            color: 'white'
+          } : {
+            position: 'initial'
+          }]"
+          style="font-family: Open Sans;"
+          round
+          large
+          @click="madeAnAnswer"
+        >{{answerText}}</v-btn>
+      </div>
     </v-layout>
-    <v-layout v-else fill-height column wrap>
-      <v-card v-if="shouldShowPreviousQuestion">
+    <v-layout v-else fill-height column wrap align-center white--text>
+      <div style="display: flex; flex-direction: column; align-items: center;">
+        <img src="img/icons/icon.png" width="75px" style="margin-bottom: 25px;">
+        <h1 style="text-align: center;">Runda</h1>
+        <h1 style="border-bottom: none; font-size: 75px; text-align: center;">{{getCurrentRoundNr}}</h1>
+        <h1 style="margin-bottom: 25px; text-align: center;">Ställningen</h1>
+        <ol>
+          <h3>
+            <li
+              v-for="team in getTeamsPlaying"
+              :key="getTeamsPlaying.indexOf(team)"
+            >{{team.name}} - {{team.points}} poäng</li>
+          </h3>
+        </ol>
+        <h2
+          id="current-teams-turn"
+          style="margin-top: 25px;"
+          :class="{ isDashed: this.isDashed, isSolid: !this.isDashed }"
+        >{{ getCurrentTeam.name }} tur!</h2>
+        <v-btn
+          style="margin-top: 25px; font-family: Open Sans; width: 100%"
+          class="rounded"
+          @click="startGame"
+          large
+        >Spela</v-btn>
+      </div>
+      <!--<v-card v-if="shouldShowPreviousQuestion">
         <v-card-title v-if="previousQuestion.wasCorrect">
           <h1>Rätt!</h1>
         </v-card-title>
@@ -69,18 +118,20 @@
           <h1>Fel! Rätt år var: {{ previousQuestion.year }}</h1>
         </v-card-title>
       </v-card>
-      <v-card>
-        <v-card-title>
+      <v-card class="rounded" style="display: flex; flex-direction: column;">
+        <v-card-title style="justify-content: center">
           <h1>{{ getCurrentTeam.name }}</h1>
         </v-card-title>
         <v-card-text>
-          <h3>Runda {{ getCurrentRoundNr }}</h3>
-          <h3>{{ getCurrentTeam.points }} poäng</h3>
+          <h3 style="text-align: center">Runda {{ getCurrentRoundNr }}</h3>
+          <h3 style="text-align: center">{{ getCurrentTeam.points }} poäng</h3>
         </v-card-text>
-      </v-card>
-      <v-card>
-        <v-btn @click="startGame">Redo</v-btn>
-      </v-card>
+        <v-btn class="rounded" @click="startGame" x-large>
+          <h3>
+            <strong>Redo</strong>
+          </h3>
+        </v-btn>
+      </v-card>-->
     </v-layout>
   </v-container>
 </template>
@@ -88,6 +139,8 @@
 </style>
 <script>
 import { mapGetters, mapActions } from "vuex";
+// import goTo from 'vuetify/lib/components/Vuetify/goTo'
+const defaultTime = 45;
 export default {
   created() {
     if (this.getCurrentTeam === undefined) {
@@ -96,18 +149,27 @@ export default {
       const url = document.location.href;
       document.location.href = url.substring(0, url.indexOf("/", 8));
     }
+    this.interval = setInterval(() => {
+      this.isDashed = !this.isDashed;
+    }, 1500);
   },
-  components: {},
+  destroyed() {
+    clearInterval(this.interval);
+  },
   data() {
     return {
       gameIsActive: false,
+      gameIsFinished: false,
       answerIndex: 0,
       totalScroll: 0,
-      timeLeft: 30,
+      timeLeft: defaultTime,
       previousQuestion: {
         year: null,
         wasCorrect: null
-      }
+      },
+      isDashed: false,
+      fixTimeTop: false,
+      fixButtonBot: true
     };
   },
   computed: {
@@ -119,13 +181,6 @@ export default {
       "getRoundLimit",
       "getTeamsPlaying"
     ]),
-
-    gameIsFinished: {
-      cache: false,
-      get() {
-        return this.getCurrentRoundNr - 1 === this.getRoundLimit;
-      }
-    },
     shouldShowPreviousQuestion() {
       return this.previousQuestion.year !== null;
     },
@@ -162,17 +217,25 @@ export default {
         totalAnswers[this.answerIndex - 1],
         totalAnswers[this.answerIndex]
       ];
-    },
-    arrowTopLength() {
-      const nr = this.answerIndex;
-      const totalOffsetHeight = nr * 180 + 32 + (nr - 1) * 15 + 150;
-      return totalOffsetHeight;
     }
   },
   methods: {
     ...mapActions(["incTeamPoints", "addAnswerToTeam", "newRound"]),
+    fixElements() {
+      // console.log(scrollY);
+
+      if (scrollY > 200) {
+        this.fixButtonBot = false;
+        this.fixTimeTop = true;
+      }
+      if (scrollY < 200) {
+        this.fixButtonBot = true;
+        this.fixTimeTop = false;
+      }
+    },
     startGame() {
       this.gameIsActive = true;
+
       this.startTimer();
     },
     startTimer() {
@@ -190,7 +253,12 @@ export default {
     },
     tick() {
       if (this.timeLeft - 1 < 1) {
-        this.resetForNextRound();
+        if (this.getCurrentRoundNr === this.getRoundLimit) {
+          this.resetTimer();
+          this.gameIsFinished = true;
+        } else {
+          this.resetForNextRound();
+        }
       }
       this.timeLeft -= 1;
     },
@@ -208,7 +276,7 @@ export default {
     },
     resetTimer() {
       clearInterval(this.timer);
-      this.timeLeft = 30;
+      this.timeLeft = defaultTime;
     },
     madeAnAnswer() {
       if (this.isCorrectAnswer()) {
@@ -220,29 +288,21 @@ export default {
     shouldBeActive(id) {
       return this.activeAnswers.map(i => i.index).includes(id);
     },
-    updateAnswerIndex(origin) {
+    updateAnswerIndex(id) {
       const totalAnswers = this.getTeamAnswers;
-      switch (origin) {
-        case "Up": {
-          this.answerIndex =
-            this.answerIndex - 1 < 0 ? this.answerIndex : this.answerIndex - 1;
-          this.totalScroll -= 200;
-          window.scroll(0, this.totalScroll);
-          break;
-        }
-        case "Down": {
-          this.answerIndex =
-            this.answerIndex + 1 > totalAnswers.length
-              ? this.answerIndex
-              : this.answerIndex + 1;
-          this.totalScroll += 200;
-          window.scroll(0, this.totalScroll);
-          break;
-        }
-        default: {
-          break;
-        }
+      if (id < this.answerIndex) {
+        this.answerIndex =
+          this.answerIndex - 1 < 0 ? this.answerIndex : this.answerIndex - 1;
+      } else {
+        this.answerIndex =
+          this.answerIndex + 1 > totalAnswers.length
+            ? this.answerIndex
+            : this.answerIndex + 1;
       }
+    },
+    endGame() {
+      this.gameIsActive = false;
+      this.gameIsFinished = false;
     }
   }
 };
@@ -250,16 +310,13 @@ export default {
 
 <style scoped>
 .active {
-  border: 3px solid lightgreen;
+  border: 5px solid seagreen;
 }
 .inactive {
-  border: 3px solid maroon;
+  border: 5px solid #8c90a5;
 }
 #answers {
   overflow-y: scroll;
-  margin-left: 35px;
-  margin-top: 150px;
-  margin-bottom: 125px;
 }
 #arrow {
   position: absolute;
@@ -289,6 +346,20 @@ export default {
   width: 100%;
   margin-left: -30px;
   text-align: center;
+}
+.rounded {
+  border-radius: 15px;
+}
+h1 {
+  font-size: 35px;
+  font-family: "Raleway", sans-serif;
+  border-bottom: 4px solid #8c90a5;
+}
+.isDashed {
+  border-bottom: 4px dashed white;
+}
+.isSolid {
+  border-bottom: 4px solid white;
 }
 </style>
 
