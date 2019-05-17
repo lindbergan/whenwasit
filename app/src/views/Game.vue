@@ -12,7 +12,7 @@
       <v-btn primary to="/">Spela igen</v-btn>
     </v-layout>
     <v-layout v-else-if="gameIsActive">
-      <v-layout column wrap id="question-box">
+      <v-layout column wrap id="question-box" class="rounded">
         <v-card>
           <v-card-text>
             <h2>{{ getCurrentQuestion.title }}</h2>
@@ -69,17 +69,19 @@
           <h1>Fel! Rätt år var: {{ previousQuestion.year }}</h1>
         </v-card-title>
       </v-card>
-      <v-card>
-        <v-card-title>
+      <v-card class="rounded" style="display: flex; flex-direction: column;">
+        <v-card-title style="justify-content: center">
           <h1>{{ getCurrentTeam.name }}</h1>
         </v-card-title>
         <v-card-text>
-          <h3>Runda {{ getCurrentRoundNr }}</h3>
-          <h3>{{ getCurrentTeam.points }} poäng</h3>
+          <h3 style="text-align: center">Runda {{ getCurrentRoundNr }}</h3>
+          <h3 style="text-align: center">{{ getCurrentTeam.points }} poäng</h3>
         </v-card-text>
-      </v-card>
-      <v-card>
-        <v-btn @click="startGame">Redo</v-btn>
+        <v-btn class="rounded" @click="startGame" x-large>
+          <h3>
+            <strong>Redo</strong>
+          </h3>
+        </v-btn>
       </v-card>
     </v-layout>
   </v-container>
@@ -97,7 +99,6 @@ export default {
       document.location.href = url.substring(0, url.indexOf("/", 8));
     }
   },
-  components: {},
   data() {
     return {
       gameIsActive: false,
@@ -289,6 +290,9 @@ export default {
   width: 100%;
   margin-left: -30px;
   text-align: center;
+}
+.rounded {
+  border-radius: 15px;
 }
 </style>
 

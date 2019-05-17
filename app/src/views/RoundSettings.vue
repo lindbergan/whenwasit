@@ -1,33 +1,34 @@
 <template>
   <v-container fluid fill-height>
-    <v-toolbar app dark color="#594939">
-      <v-toolbar-title>Inställningar</v-toolbar-title>
-    </v-toolbar>
-    <v-layout column wrap white--text justify-space-around align-center>
-      <v-layout column wrap justify-space-between>
-        <h1>Antal rundor</h1>
-        <v-select :items="rounds" dark :value="rounds[1]"/>
-      </v-layout>
-      <v-layout column justify-space-around align-center>
-        <h1>Kategorier</h1>
-        <v-list>
+    <v-layout column wrap white--text align-center fill-height justify-center>
+      <div style="display: flex; flex-direction: column; align-items: center;">
+        <img width="75px" style="margin-bottom: 25px;" src="img/icons/icon.png">
+        <h1 style="margin-bottom: 25px; text-align: center;">Rundor</h1>
+        <v-select style="width: 120px; font-family: Open Sans, sans serif;" :items="rounds" color="black" :value="rounds[1]" solo/>
+        <v-btn style="width: 100%; font-family: Open Sans;" round large to="/game">Fortsätt</v-btn>
+      </div>
+    </v-layout>
+    <!--<v-layout column justify-space-around align-center>
+        <v-list class="rounded">
           <v-list-tile v-for="category in categories" :key="category.id">
             <v-list-tile-content>
-              <v-list-tile-title v-text="category.name"></v-list-tile-title>
+              <strong v-if="category.isSelected">
+                <v-list-tile-title v-text="category.name"/>
+              </strong>
+              <v-list-tile-title v-else v-text="category.name"/>
             </v-list-tile-content>
             <v-list-tile-action>
               <v-icon
-                v-if="category.isPlaying"
+                v-if="category.isSelected"
                 @click="changeSelect(category.id)"
                 color="red"
               >remove</v-icon>
               <v-icon v-else @click="changeSelect(category.id)" color="green">check</v-icon>
             </v-list-tile-action>
           </v-list-tile>
-        </v-list>
-        <v-btn round large to="/game">Fortsätt</v-btn>
-      </v-layout>
-    </v-layout>
+        </v-list
+        
+    </v-layout>>-->
   </v-container>
 </template>
 <style scoped>
@@ -44,34 +45,34 @@ export default {
         {
           name: "Kända svenska personer",
           id: 0,
-          isPlaying: true
+          isSelected: true
         },
         {
           name: "Katastrofer",
           id: 1,
-          isPlaying: true
+          isSelected: true
         },
         {
           name: "Kända personer",
           id: 2,
-          isPlaying: false
+          isSelected: false
         },
         {
           name: "Historiska händelser",
           id: 3,
-          isPlaying: false
+          isSelected: false
         },
         {
           name: "Sportrelaterat",
           id: 4,
-          isPlaying: false
+          isSelected: false
         }
       ]
     };
   },
   methods: {
     changeSelect(id) {
-      this.categories[id].isPlaying = !this.categories[id].isPlaying;
+      this.categories[id].isSelected = !this.categories[id].isSelected;
     }
   }
 };
@@ -80,9 +81,11 @@ export default {
 <style scoped>
 h1 {
   font-size: 35px;
-  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
-    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
-  font-weight: 900;
+  font-family: "Raleway", sans-serif;
+  border-bottom: 4px solid #8c90a5;
+}
+.rounded {
+  border-radius: 15px;
 }
 </style>
 
