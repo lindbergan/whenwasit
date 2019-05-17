@@ -1,15 +1,27 @@
 <template>
   <v-container fluid>
-    <v-layout column wrap v-if="gameIsFinished">
-      <v-card>
-        <v-card-title primaryTitle>
-          <h1>Slut</h1>
-        </v-card-title>
-        <v-card v-for="team in getTeamsPlaying" :key="team.index">
-          <h3>{{ team.name }}</h3>
-        </v-card>
-      </v-card>
-      <v-btn primary to="/">Spela igen</v-btn>
+    <v-layout column wrap v-if="gameIsFinished" white--text align-center>
+      <img src="img/icons/icon.png" width="75px" style="margin-bottom: 25px;">
+      <img
+        width="100%"
+        style="max-width: 350px; margin-bottom: 25px; align-self: center"
+        src="img/icons/name.png"
+      >
+      <h1 style="margin-bottom: 25px;">Slut</h1>
+      <ol>
+        <h3>
+          <li
+            v-for="team in getTeamsPlaying"
+            :key="getTeamsPlaying.indexOf(team)"
+          >{{team.name}} - {{team.points}} poäng</li>
+        </h3>
+      </ol>
+      <h2
+        id="current-teams-turn"
+        style="margin-top: 25px; margin-bottom: 25px;"
+        :class="{ isDashed: this.isDashed, isSolid: !this.isDashed }"
+      >{{ getCurrentTeam.name }} VINNER!</h2>
+      <v-btn round large style="font-family: Open Sans" @click="endGame()" to="/">Spela igen</v-btn>
     </v-layout>
     <v-layout v-else-if="gameIsActive" white--text>
       <div
@@ -31,16 +43,15 @@
           </v-card>
         </div>
         <img src="img/icons/name.png" style="width: 100%; margin-bottom: 25px;">
-        <v-card class="rounded" v-if="!fixTimeTop">
+        <v-card class="rounded">
           <div style="display: flex; flex-direction: column; align-items: center;">
             <v-card-text style="text-align: center;">
               <h3 style="font-family: Open Sans; font-weight: 400;">{{ getCurrentQuestion.title }}</h3>
             </v-card-text>
           </div>
         </v-card>
-        <h1 v-if="!fixTimeTop" style="margin-bottom: 25px; font-size: 55px;">{{timeLeft}}</h1>
+        <h1 style="margin-bottom: 25px; font-size: 55px;">{{timeLeft}}</h1>
         <v-layout id="answers" row wrap>
-          <!-- v-scroll="fixElements" -->
           <v-card
             v-for="item in sortedAnswers"
             :key="sortedAnswers.indexOf(item)"
@@ -60,7 +71,9 @@
         <v-btn
           :style="[fixButtonBot ? {
             position: 'fixed',
-            bottom: '30px'
+            bottom: '30px',
+            backgroundColor: '#222646',
+            color: 'white'
           } : {
             position: 'initial'
           }]"
@@ -146,6 +159,7 @@ export default {
   data() {
     return {
       gameIsActive: false,
+      gameIsFinished: false,
       answerIndex: 0,
       totalScroll: 0,
       timeLeft: defaultTime,
@@ -167,13 +181,6 @@ export default {
       "getRoundLimit",
       "getTeamsPlaying"
     ]),
-
-    gameIsFinished: {
-      cache: false,
-      get() {
-        return this.getCurrentRoundNr - 1 === this.getRoundLimit;
-      }
-    },
     shouldShowPreviousQuestion() {
       return this.previousQuestion.year !== null;
     },
@@ -228,6 +235,7 @@ export default {
     },
     startGame() {
       this.gameIsActive = true;
+
       this.startTimer();
     },
     startTimer() {
@@ -245,7 +253,12 @@ export default {
     },
     tick() {
       if (this.timeLeft - 1 < 1) {
-        this.resetForNextRound();
+        if (this.getCurrentRoundNr === this.getRoundLimit) {
+          this.resetTimer();
+          this.gameIsFinished = true;
+        } else {
+          this.resetForNextRound();
+        }
       }
       this.timeLeft -= 1;
     },
@@ -286,6 +299,10 @@ export default {
             ? this.answerIndex
             : this.answerIndex + 1;
       }
+    },
+    endGame() {
+      this.gameIsActive = false;
+      this.gameIsFinished = false;
     }
   }
 };
