@@ -12,3 +12,6 @@ $ yarn serve
 
 ## Screenshots
 ![hello](screenshots/hello.png)
+![ChooseTeams](screenshots/chooseTeam.png)
+![Settings](screenshots/settings.png)
+![ReadyToPlay](screenshots/readyToPlay.png)
