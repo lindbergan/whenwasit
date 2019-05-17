@@ -5,7 +5,7 @@
         <img width="75px" style="margin-bottom: 25px;" src="img/icons/icon.png">
         <h1 style="margin-bottom: 25px; text-align: center; max-width: 150px; ">Välj lag</h1>
         <v-list class="rounded">
-          <v-list-tile v-for="team in getAllTeams" :key="team.index">
+          <v-list-tile v-for="team in getAllTeams" :key="getAllTeams.indexOf(team)">
             <v-list-tile-content>
               <v-list-tile-title style="font-family: Open Sans, sans-serif;" v-text="team.name"></v-list-tile-title>
             </v-list-tile-content>

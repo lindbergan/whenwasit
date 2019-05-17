@@ -60,8 +60,33 @@
         </v-layout>
       </v-card>
     </v-layout>
-    <v-layout v-else fill-height column wrap>
-      <v-card v-if="shouldShowPreviousQuestion">
+    <v-layout v-else fill-height column wrap align-center white--text>
+      <div style="display: flex; flex-direction: column; align-items: center;">
+        <img src="img/icons/icon.png" width="75px" style="margin-bottom: 25px;">
+        <h1 style="text-align: center;">Runda</h1>
+        <h1 style="border-bottom: none; font-size: 75px; text-align: center;">{{getCurrentRoundNr}}</h1>
+        <h1 style="margin-bottom: 25px; text-align: center;">Ställningen</h1>
+        <ol>
+          <h3>
+            <li
+              v-for="team in getTeamsPlaying"
+              :key="getTeamsPlaying.indexOf(team)"
+            >{{team.name}} - {{team.points}} poäng</li>
+          </h3>
+        </ol>
+        <h2
+          id="current-teams-turn"
+          style="margin-top: 25px;"
+          :class="{ isDashed: this.isDashed, isSolid: !this.isDashed }"
+        >{{ getCurrentTeam.name }} tur!</h2>
+        <v-btn
+          style="margin-top: 25px; font-family: Open Sans; width: 100%"
+          class="rounded"
+          @click="startGame"
+          large
+        >Spela</v-btn>
+      </div>
+      <!--<v-card v-if="shouldShowPreviousQuestion">
         <v-card-title v-if="previousQuestion.wasCorrect">
           <h1>Rätt!</h1>
         </v-card-title>
@@ -82,7 +107,7 @@
             <strong>Redo</strong>
           </h3>
         </v-btn>
-      </v-card>
+      </v-card>-->
     </v-layout>
   </v-container>
 </template>
@@ -98,6 +123,12 @@ export default {
       const url = document.location.href;
       document.location.href = url.substring(0, url.indexOf("/", 8));
     }
+    this.interval = setInterval(() => {
+      this.isDashed = !this.isDashed;
+    }, 1500);
+  },
+  destroyed() {
+    clearInterval(this.interval);
   },
   data() {
     return {
@@ -108,7 +139,8 @@ export default {
       previousQuestion: {
         year: null,
         wasCorrect: null
-      }
+      },
+      isDashed: false
     };
   },
   computed: {
@@ -293,6 +325,17 @@ export default {
 }
 .rounded {
   border-radius: 15px;
+}
+h1 {
+  font-size: 35px;
+  font-family: "Raleway", sans-serif;
+  border-bottom: 4px solid #8c90a5;
+}
+.isDashed {
+  border-bottom: 4px dashed white;
+}
+.isSolid {
+  border-bottom: 4px solid white;
 }
 </style>
 
