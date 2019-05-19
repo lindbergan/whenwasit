@@ -23,23 +23,23 @@
       >{{ getCurrentTeam.name }} VINNER!</h2>
       <v-btn round large style="font-family: Open Sans" @click="endGame()" to="/">Spela igen</v-btn>
     </v-layout>
-    <v-layout v-else-if="gameIsActive" white--text>
+    <v-layout v-else-if="gameIsActive" white--text align-center justify-center>
       <div style="display: flex; flex-direction: column; align-items: center;">
-        <div v-if="fixTimeTop" style="z-index: 3; position: fixed; top: 30px;">
+        <div v-if="fixTimeTop" style="z-index: 3; position: fixed; top: 30px; margin-right: 15px;">
           <v-card class="rounded">
             <v-layout row wrap justify-center align-center>
-              <v-card-text style="text-align: center;">
-                <h1
-                  style="margin-bottom: 25px; width: 50px; display: inline; margin-right: 25px;"
-                >{{timeLeft}}</h1>
-                <h3
-                  style="font-family: Open Sans; font-weight: 400; display: inline;"
-                >{{ getCurrentQuestion.title }}</h3>
+              <v-card-text style="text-align: center; padding-right: -30px;">
+                <div style="display: grid; grid-template-columns: 20% 80%;">
+                  <h1>{{timeLeft}}</h1>
+                  <h3
+                    style="font-family: Open Sans; font-weight: 400;"
+                  >{{ getCurrentQuestion.title }}</h3>
+                </div>
               </v-card-text>
             </v-layout>
           </v-card>
         </div>
-        <img src="img/icons/name.png" style="width: 100%; margin-bottom: 25px;">
+        <img src="img/icons/name.png" style="width: 100%; margin-bottom: 25px; max-width: 300px;">
         <v-card class="rounded" ref="questionAndTime">
           <div style="display: flex; flex-direction: column; align-items: center;">
             <v-card-text style="text-align: center;">
@@ -48,11 +48,11 @@
           </div>
         </v-card>
         <h1 style="margin-bottom: 25px; font-size: 55px;">{{timeLeft}}</h1>
-        <v-layout id="answers" row wrap>
+        <v-layout id="answers" column wrap>
           <v-card
             v-for="item in sortedAnswers"
             :key="sortedAnswers.indexOf(item)"
-            style="margin-bottom: 15px; padding: 5px; width: 100%;"
+            style="margin-bottom: 15px; padding: 5px; width: 100%; max-width: 300px;"
             class="rounded"
             ref="answers"
             :class="[shouldBeActive(item.index) ? 'active' : 'inactive']"
