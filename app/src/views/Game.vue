@@ -24,10 +24,7 @@
       <v-btn round large style="font-family: Open Sans" @click="endGame()" to="/">Spela igen</v-btn>
     </v-layout>
     <v-layout v-else-if="gameIsActive" white--text>
-      <div
-        style="display: flex; flex-direction: column; align-items: center;"
-        v-scroll="fixElements"
-      >
+      <div style="display: flex; flex-direction: column; align-items: center;">
         <div v-if="fixTimeTop" style="z-index: 3; position: fixed; top: 30px;">
           <v-card class="rounded">
             <v-layout row wrap justify-center align-center>
@@ -43,7 +40,7 @@
           </v-card>
         </div>
         <img src="img/icons/name.png" style="width: 100%; margin-bottom: 25px;">
-        <v-card class="rounded">
+        <v-card class="rounded" ref="questionAndTime">
           <div style="display: flex; flex-direction: column; align-items: center;">
             <v-card-text style="text-align: center;">
               <h3 style="font-family: Open Sans; font-weight: 400;">{{ getCurrentQuestion.title }}</h3>
@@ -57,6 +54,7 @@
             :key="sortedAnswers.indexOf(item)"
             style="margin-bottom: 15px; padding: 5px; width: 100%;"
             class="rounded"
+            ref="answers"
             :class="[shouldBeActive(item.index) ? 'active' : 'inactive']"
             @click="updateAnswerIndex(sortedAnswers.indexOf(item))"
           >
@@ -69,15 +67,16 @@
           </v-card>
         </v-layout>
         <v-btn
-          :style="[fixButtonBot ? {
-            position: 'fixed',
-            bottom: '30px',
-            backgroundColor: '#222646',
-            color: 'white'
-          } : {
+          :style="[buttonBotShouldBeDark ? {
+              position: 'fixed',
+              bottom: '20px',
+              backgroundColor: '#222646',
+              color: 'white'
+            } : {
             position: 'initial'
           }]"
-          style="font-family: Open Sans;"
+          ref="btnBot"
+          style="font-family: Open Sans; height: 75px;"
           round
           large
           @click="madeAnAnswer"
@@ -140,7 +139,7 @@
 <script>
 import { mapGetters, mapActions } from "vuex";
 // import goTo from 'vuetify/lib/components/Vuetify/goTo'
-const defaultTime = 45;
+const defaultTime = process.env.NODE_ENV === "development" ? 900 : 45;
 export default {
   created() {
     if (this.getCurrentTeam === undefined) {
@@ -167,9 +166,7 @@ export default {
         year: null,
         wasCorrect: null
       },
-      isDashed: false,
-      fixTimeTop: false,
-      fixButtonBot: true
+      isDashed: false
     };
   },
   computed: {
@@ -181,6 +178,29 @@ export default {
       "getRoundLimit",
       "getTeamsPlaying"
     ]),
+    buttonBotShouldBeDark: {
+      cache: false,
+      get: function() {
+        if (this.$refs.btnBot && this.$refs.answers) {
+          return (
+            window.scrollY + window.innerHeight <
+              this.$refs.answers[this.$refs.answers.length - 1].$el.offsetTop &&
+            this.$refs.answers[this.$refs.answers.length - 1].$el.offsetTop >
+              window.innerHeight
+          );
+        }
+        return false;
+      }
+    },
+    fixTimeTop: {
+      cache: false,
+      get: function() {
+        if (this.$refs.questionAndTime) {
+          return window.scrollY > this.$refs.questionAndTime.$el.offsetTop;
+        }
+        return false;
+      }
+    },
     shouldShowPreviousQuestion() {
       return this.previousQuestion.year !== null;
     },
@@ -221,18 +241,6 @@ export default {
   },
   methods: {
     ...mapActions(["incTeamPoints", "addAnswerToTeam", "newRound"]),
-    fixElements() {
-      // console.log(scrollY);
-
-      if (scrollY > 200) {
-        this.fixButtonBot = false;
-        this.fixTimeTop = true;
-      }
-      if (scrollY < 200) {
-        this.fixButtonBot = true;
-        this.fixTimeTop = false;
-      }
-    },
     startGame() {
       this.gameIsActive = true;
 
