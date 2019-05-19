@@ -29,7 +29,7 @@ h1 {
   text-align: center;
 }
 #snackbar {
-  visibility: show;
+  visibility: hidden;
   width: 90%;
   max-width: 400px;
   background-color: #333;
@@ -74,4 +74,6 @@ h1 {
   }
 }
 </style>
+
+
 
