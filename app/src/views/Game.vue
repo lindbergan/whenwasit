@@ -20,7 +20,7 @@
         id="current-teams-turn"
         style="margin-top: 25px; margin-bottom: 25px;"
         :class="{ isDashed: this.isDashed, isSolid: !this.isDashed }"
-      >{{ getCurrentTeam.name }} VINNER!</h2>
+      >{{ getWinningTeam.name }} VINNER</h2>
       <v-btn round large style="font-family: Open Sans" @click="endGame()" to="/">Spela igen</v-btn>
     </v-layout>
     <v-layout v-else-if="gameIsActive" white--text align-center justify-center column wrap>
@@ -55,7 +55,7 @@
             style="margin-bottom: 15px; padding: 5px; width: 100%; max-width: 300px;"
             class="rounded"
             ref="answers"
-            :class="[shouldBeActive(item.index) ? 'active' : 'inactive']"
+            :class="[shouldBeActiveTop(item.index) ? 'activeUp' : shouldBeActiveBottom(item.index) ? 'activeDown' : 'inactive']"
             @click="updateAnswerIndex(sortedAnswers.indexOf(item))"
           >
             <v-card-title style="justify-content: center; width: 100%;">
@@ -74,8 +74,8 @@
               color: 'white',
               border: '1px solid #ccc'
             } : {
-              position: 'inherit',
-              bottom: 'inherit'
+              position: 'sticky',
+              bottom: 'auto'
           }]"
           ref="btnBot"
           style="font-family: Open Sans; height: 75px; width: 100%; max-width: 350px; margin-left: 0px;"
@@ -110,28 +110,6 @@
           large
         >Spela</v-btn>
       </div>
-      <!--<v-card v-if="shouldShowPreviousQuestion">
-        <v-card-title v-if="previousQuestion.wasCorrect">
-          <h1>Rätt!</h1>
-        </v-card-title>
-        <v-card-title v-else>
-          <h1>Fel! Rätt år var: {{ previousQuestion.year }}</h1>
-        </v-card-title>
-      </v-card>
-      <v-card class="rounded" style="display: flex; flex-direction: column;">
-        <v-card-title style="justify-content: center">
-          <h1>{{ getCurrentTeam.name }}</h1>
-        </v-card-title>
-        <v-card-text>
-          <h3 style="text-align: center">Runda {{ getCurrentRoundNr }}</h3>
-          <h3 style="text-align: center">{{ getCurrentTeam.points }} poäng</h3>
-        </v-card-text>
-        <v-btn class="rounded" @click="startGame" x-large>
-          <h3>
-            <strong>Redo</strong>
-          </h3>
-        </v-btn>
-      </v-card>-->
     </v-layout>
   </v-container>
 </template>
@@ -160,7 +138,7 @@ export default {
     return {
       gameIsActive: false,
       gameIsFinished: false,
-      answerIndex: 0,
+      answerIndex: 1,
       totalScroll: 0,
       timeLeft: defaultTime,
       previousQuestion: {
@@ -179,6 +157,10 @@ export default {
       "getRoundLimit",
       "getTeamsPlaying"
     ]),
+    getWinningTeam() {
+      if (this.getTeamsPlaying.length === 1) return getCurrentTeam;
+      return this.getTeamsPlaying.sort((a, b) => b.points - a.points)[0];
+    },
     buttonBotShouldBeDark: {
       cache: false,
       get: function() {
@@ -294,12 +276,19 @@ export default {
       }
       this.resetForNextRound();
     },
-    shouldBeActive(id) {
-      return this.activeAnswers.map(i => i.index).includes(id);
+    shouldBeActiveBottom(id) {
+      return (
+        this.activeAnswers.map(i => i.index).includes(id) &&
+        id <= this.answerIndex
+      );
+    },
+    shouldBeActiveTop(id) {
+      return (
+        this.activeAnswers.map(i => i.index).includes(id) &&
+        id >= this.answerIndex
+      );
     },
     updateAnswerIndex(id) {
-      console.log("Pressed card");
-
       const totalAnswers = this.getTeamAnswers;
       if (id < this.answerIndex) {
         this.answerIndex =
@@ -320,8 +309,15 @@ export default {
 </script>
 
 <style scoped>
-.active {
-  border: 5px solid seagreen;
+.activeUp {
+  border-top: 10px solid seagreen;
+  border-left: 10px solid seagreen;
+  border-right: 10px solid seagreen;
+}
+.activeDown {
+  border-bottom: 10px solid seagreen;
+  border-left: 10px solid seagreen;
+  border-right: 10px solid seagreen;
 }
 .inactive {
   border: 5px solid #8c90a5;
