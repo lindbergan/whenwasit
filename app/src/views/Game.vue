@@ -23,7 +23,7 @@
       >{{ getCurrentTeam.name }} VINNER!</h2>
       <v-btn round large style="font-family: Open Sans" @click="endGame()" to="/">Spela igen</v-btn>
     </v-layout>
-    <v-layout v-else-if="gameIsActive" white--text align-center justify-center>
+    <v-layout v-else-if="gameIsActive" white--text align-center justify-center column wrap>
       <div style="display: flex; flex-direction: column; align-items: center;">
         <div v-if="fixTimeTop" style="z-index: 3; position: fixed; top: 30px; margin-right: 15px;">
           <v-card class="rounded">
@@ -71,14 +71,15 @@
               position: 'fixed',
               bottom: '20px',
               backgroundColor: '#222646',
-              color: 'white'
+              color: 'white',
+              border: '1px solid #ccc'
             } : {
-            position: 'initial'
+              position: 'inherit',
+              bottom: 'inherit'
           }]"
           ref="btnBot"
-          style="font-family: Open Sans; height: 75px;"
+          style="font-family: Open Sans; height: 75px; width: 100%; max-width: 350px; margin-left: 0px;"
           round
-          large
           @click="madeAnAnswer"
         >{{answerText}}</v-btn>
       </div>
@@ -297,6 +298,8 @@ export default {
       return this.activeAnswers.map(i => i.index).includes(id);
     },
     updateAnswerIndex(id) {
+      console.log("Pressed card");
+
       const totalAnswers = this.getTeamAnswers;
       if (id < this.answerIndex) {
         this.answerIndex =
